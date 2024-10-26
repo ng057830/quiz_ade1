@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Álgebra Lineal - ADE</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <!-- MathJax CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS_HTML"></script>
+    <script type="text/x-mathjax-config">
+        MathJax.Hub.Config({
+            tex2jax: {inlineMath: [['\\(','\\)']]}
+        });
+    </script>
+    <style>
+        :root {
+            --primary: #2563eb; /* Azul intenso */
+            --secondary: #1e293b; /* Gris oscuro */
+            --success: #16a34a; /* Verde */
+            --warning: #f59e0b; /* Amarillo */
+            --danger: #ef4444; /* Rojo */
+            --background: #f8fafc; /* Blanco humo */
+            --light-gray: #e2e8f0; /* Gris claro */
+            --blue-light: #93c5fd; /* Azul claro */
+            --red-light: #fca5a5; /* Rojo claro */
+            --green-light: #6ee7b7; /* Verde claro */
+            --yellow-light: #fcd34d; /* Amarillo claro */
+            --white: #ffffff; /* Blanco */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background);
+            color: var(--secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: var(--white);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            font-size: 1rem;
+            color: var(--secondary);
+        }
+
+        #start-screen p {
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            color: var(--secondary);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .btn:hover {
+            background-color: #1d4ed8; /* Azul más oscuro */
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .timer-container {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .timer {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 10px;
+            background-color: var(--light-gray);
+            border-radius: 5px;
+            margin: 0 1rem;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: var(--primary);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s ease;
+        }
+
+        .question-container {
+            margin-bottom: 2rem;
+        }
+
+        .question {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #f1f5f9; /* Azul muy claro */
+            border-left: 4px solid var(--primary);
+            border-radius: 6px;
+        }
+
+        .options {
+            display: grid;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .option {
+            padding: 1rem;
+            border: 2px solid var(--light-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+            background-color: var(--white);
+            position: relative;
+        }
+
+        .option:hover {
+            border-color: var(--primary);
+            background-color: var(--blue-light);
+            transform: scale(1.02);
+        }
+
+        .option.selected {
+            border-color: var(--primary);
+            background-color: #e0f2fe; /* Azul muy claro */
+        }
+
+        .results {
+            display: none;
+            text-align: center;
+        }
+
+        .results h2 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            font-size: 1.75rem;
+        }
+
+        .score {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+
+        .feedback {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            background-color: #f1f5f9; /* Azul muy claro */
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            .header h1 {
+                font-size: 1.75rem;
+            }
+
+            .timer {
+                font-size: 1.3rem;
+            }
+
+            .question {
+                font-size: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quiz de Conceptos de Álgebra Lineal</h1>
+            <p>Duración: 5 minutos • 8 preguntas • Selección múltiple</p>
+        </div>
+
+        <!-- Pantalla de Inicio -->
+        <div id="start-screen">
+            <p>Este quiz evaluará tu comprensión conceptual de los fundamentos de álgebra lineal en el contexto de Administración y Dirección de Empresas.</p>
+            <button class="btn" id="start-btn">Comenzar Quiz</button>
+        </div>
+
+        <!-- Pantalla del Quiz -->
+        <div id="quiz-screen" style="display: none;">
+            <div class="timer-container">
+                <div class="timer" id="timer">5:00</div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
+                </div>
+            </div>
+
+            <div class="question-container" id="questions">
+                <!-- Las preguntas se insertarán aquí dinámicamente -->
+            </div>
+
+            <button class="btn" id="next-btn" style="display: none;">Siguiente Pregunta</button>
+        </div>
+
+        <!-- Pantalla de Resultados -->
+        <div id="results" class="results">
+            <h2>Resultados</h2>
+            <p>Puntuación: <span id="score">0</span>/8</p>
+            <div id="feedback" class="feedback"></div>
+            <button class="btn" onclick="location.reload()">Intentar de nuevo</button>
+        </div>
+    </div>
+
+    <script>
+        // Función para mezclar un array (Fisher-Yates Shuffle)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const questions = [
+            {
+                question: "¿Cuál de las siguientes afirmaciones describe mejor el concepto de independencia lineal de vectores?",
+                options: [
+                    "Ningún vector del conjunto puede ser expresado como combinación lineal de los otros vectores",
+                    "Los vectores deben tener la misma longitud",
+                    "Los vectores deben ser perpendiculares entre sí",
+                    "Los vectores deben tener componentes positivas"
+                ],
+                correct: 0
+            },
+            {
+                question: "En el contexto de aplicaciones lineales, ¿qué propiedad fundamental debe cumplirse?",
+                options: [
+                    "La aplicación debe ser siempre invertible",
+                    "\\(f(\\alpha v + \\beta w) = \\alpha f(v) + \\beta f(w)\\) para todos los vectores \\(v,w\\) y escalares \\(\\alpha,\\beta\\)",
+                    "La aplicación debe preservar ángulos entre vectores",
+                    "La aplicación debe mapear vectores a números reales únicamente"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué representa geométricamente un autovector de una matriz?",
+                options: [
+                    "Un vector que cambia de dirección al aplicar la transformación",
+                    "Un vector que se hace cero al aplicar la transformación",
+                    "Un vector que solo cambia su magnitud (se estira o contrae) pero mantiene su dirección al aplicar la transformación",
+                    "Un vector perpendicular a todos los demás vectores"
+                ],
+                correct: 2
+            },
+            {
+                question: "En el contexto de ADE, ¿cuál es la utilidad principal de las matrices en el análisis de producción?",
+                options: [
+                    "Representar gráficamente los productos",
+                    "Modelar las relaciones entre insumos y productos en un sistema de producción",
+                    "Calcular el precio de los productos",
+                    "Determinar el color del empaque de los productos"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Qué característica define a una base de un espacio vectorial?",
+                options: [
+                    "Es cualquier conjunto de vectores del espacio",
+                    "Es un conjunto de vectores perpendiculares entre sí",
+                    "Es un conjunto de vectores linealmente independientes que genera todo el espacio",
+                    "Es un conjunto de vectores con componentes enteras"
+                ],
+                correct: 2
+            },
+            {
+                question: "En el contexto de la diagonalización, ¿qué significa que una matriz sea diagonalizable?",
+                options: [
+                    "Que todos sus elementos son cero excepto en la diagonal",
+                    "Que existe una matriz similar diagonal",
+                    "Que la matriz es cuadrada",
+                    "Que la matriz tiene determinante positivo"
+                ],
+                correct: 1
+            },
+            {
+                question: "¿Cuál es la interpretación geométrica de una transformación lineal?",
+                options: [
+                    "Siempre rota los vectores 90 grados",
+                    "Preserva las operaciones de suma de vectores y multiplicación por escalar",
+                    "Convierte todos los vectores en números",
+                    "Hace que todos los vectores sean perpendiculares"
+                ],
+                correct: 1
+            },
+            {
+                question: "En aplicaciones económicas, ¿qué representa una matriz de insumo-producto?",
+                options: [
+                    "Los precios de los productos en diferentes mercados",
+                    "Las relaciones de interdependencia entre los sectores de una economía",
+                    "El inventario de una empresa",
+                    "Los salarios de los empleados"
+                ],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 300; // 5 minutos en segundos
+        let timer;
+        let answers = new Array(questions.length).fill(null);
+
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultsScreen = document.getElementById('results');
+        const questionsContainer = document.getElementById('questions');
+        const timerDisplay = document.getElementById('timer');
+        const progressBar = document.getElementById('progress');
+        
+        // Función para formatear el tiempo en MM:SS
+        function formatTime(seconds) {
+            const minutes = Math.floor(seconds / 60);
+            const remainingSeconds = seconds % 60;
+            return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+        }
+
+        // Función para actualizar el cronómetro y la barra de progreso
+        function updateTimer() {
+            timeLeft--;
+            timerDisplay.textContent = formatTime(timeLeft);
+            progressBar.style.width = `${(timeLeft / 300) * 100}%`;
+
+            if (timeLeft <= 60) {
+                timerDisplay.style.color = 'var(--danger)';
+                progressBar.style.backgroundColor = 'var(--danger)';
+            }
+
+            if (timeLeft <= 0) {
+                endQuiz();
+            }
+        }
+
+        // Función para mostrar una pregunta
+        function displayQuestion() {
+            const question = questions[currentQuestion];
+            const shuffledOptions = shuffleArray([...question.options]);
+            const correctAnswer = question.options[question.correct];
+            const correctIndex = shuffledOptions.indexOf(correctAnswer);
+
+            const questionHTML = `
+                <div class="question active">
+                    <h3>Pregunta ${currentQuestion + 1} de ${questions.length}</h3>
+                    <p>${question.question}</p>
+                    <div class="options">
+                        ${shuffledOptions.map((option, index) => `
+                            <div class="option" data-correct="${index === correctIndex}">
+                                ${option}
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            questionsContainer.innerHTML = questionHTML;
+            nextBtn.style.display = 'none';
+
+            // Agregar eventos de clic a las opciones
+            document.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', selectOption);
+            });
+
+            // Renderizar matemáticas después de actualizar el contenido
+            if (window.MathJax) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub, questionsContainer]);
+            }
+        }
+
+        // Función para manejar la selección de una opción
+        function selectOption(e) {
+            const selectedOption = e.currentTarget;
+            const isCorrect = selectedOption.dataset.correct === 'true';
+            answers[currentQuestion] = isCorrect;
+
+            // Marcar la opción seleccionada
+            document.querySelectorAll('.option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            selectedOption.classList.add('selected');
+
+            // Habilitar el botón "Siguiente Pregunta"
+            nextBtn.style.display = 'inline-block';
+        }
+
+        // Función para mostrar los resultados
+        function showResults() {
+            score = answers.filter(answer => answer).length;
+            const percentage = (score / questions.length) * 100;
+            
+            let feedback = '';
+            if (percentage >= 75) {
+                feedback = "¡Excelente trabajo! Dominas los conceptos fundamentales de álgebra lineal aplicados a ADE. Estás bien preparado para los desafíos de tu carrera.";
+            } else if (percentage >= 50) {
+                feedback = "Buen desempeño. Has demostrado comprensión en varios conceptos importantes, pero hay algunas áreas que podríamos reforzar para mejorar tu comprensión.";
+            } else {
+                feedback = "Identificamos algunas áreas que necesitan refuerzo. No te preocupes, estoy aquí para ayudarte a fortalecer estos conceptos fundamentales para tu éxito en ADE.";
+            }
+
+            document.getElementById('score').textContent = score;
+            document.getElementById('feedback').textContent = feedback;
+            
+            quizScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+        }
+
+        // Función para finalizar el quiz
+        function endQuiz() {
+            clearInterval(timer);
+            showResults();
+        }
+
+        // Evento para el botón "Siguiente Pregunta"
+        nextBtn.addEventListener('click', () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                endQuiz();
+            }
+        });
+
+        // Evento para el botón "Comenzar Quiz"
+        startBtn.addEventListener('click', () => {
+            startScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            timer = setInterval(updateTimer, 1000);
+            displayQuestion();
+        });
+
+        // Inicializar MathJax cuando el documento esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.MathJax) {
+                MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
+            }
+        });
+    </script>
+</body>
+</html>
